@@ -1,1 +1,1 @@
-from .VideoPlayer import VideoPlayer
+from .VideoPlayer import VideoPlayerWidget
