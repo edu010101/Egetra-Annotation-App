@@ -1,16 +1,23 @@
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, QThread
+import time
 import cv2
-import numpy as np
 from PyQt5.QtGui import QPixmap, QImage
-import time 
+from utils import VideoUtils
 
-class Video():
+class VideoThread(QThread):
+    FrameChangeSignal = pyqtSignal()
+
     def __init__(self, VideoPath, Viewer, Slider):
+        super().__init__()
         self.Viewer = Viewer
         self.Slider = Slider
         self.Video = cv2.VideoCapture(VideoPath)
         self.TotalFrames = self.Video.get(cv2.CAP_PROP_FRAME_COUNT)
         self.FPS = self.Video.get(cv2.CAP_PROP_FPS)
+        self.TimeBeetwenFrames = VideoUtils.CalculateTimeBeetwenFrames(self.FPS)
+        self.PlayBoolean = False
 
+        #Loads the first frame to display
         _, self.CurrentFrame = self.Video.read()
         self.CurrentFrameId = self.Video.get(cv2.CAP_PROP_POS_FRAMES)
         
@@ -22,6 +29,7 @@ class Video():
             self.CurrentFrameId = self.Video.get(cv2.CAP_PROP_POS_FRAMES)
             self.Slider.setValue(round(FrameNumber))
             _, self.CurrentFrame = self.Video.read()
+            #self.FrameChangeSignal.emit()
             self.SetImage()
         
     def GetTotalFrames(self):
@@ -55,11 +63,32 @@ class Video():
         self.SetVideoFrame(self.CurrentFrameId+1)
         self.GetCurrentVideoStatus()
         
-
     def PreviousFrame(self):
         self.SetVideoFrame(self.CurrentFrameId-1)
         self.GetCurrentVideoStatus()
-
     
-            
+    def Playf(self):
+        self.PlayBoolean = not self.PlayBoolean
+
+    #The name of the method needs to be run, beacuse its a QThread 
+    def run(self):
+        while True:
+            if self.PlayBoolean == True:
+                #The delay beetwen frames that set the video speed
+                time.sleep(self.TimeBeetwenFrames)
+
+                _, self.CurrentFrame = self.Video.read()
+                self.CurrentFrameId = self.Video.get(cv2.CAP_PROP_POS_FRAMES)
+                self.GetCurrentVideoStatus()
+                #self.Slider.setValue(round(FrameNumber))
+                
+                self.FrameChangeSignal.emit()
+    
+    @pyqtSlot()
+    def UpdateThreadImage(self):
+        self.SetImage()
+        
+    
+
+
 

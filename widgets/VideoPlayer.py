@@ -1,8 +1,10 @@
 from PyQt5.QtWidgets import QLabel, QSlider, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QSpacerItem, QSizePolicy
 from PyQt5.QtCore import Qt 
 from services import Video
-from utils import AddSpacerInLayout, AddWidgetInLayout, ClickerSlider, MediaButtons, CreateImageViewer, CreateVideoSlider
+from utils import AddSpacerInLayout, AddWidgetInLayout, ClickerSlider, MediaButtons, CreateImageViewer, CreateVideoSlider, VideoThread
+
 import asyncio
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QThread
 
 
 class VideoPlayerWidget(QWidget):
@@ -40,7 +42,9 @@ class VideoPlayerWidget(QWidget):
         self.PrincipalVerticalLayout.addLayout(self.MediaButtonsLayout) 
 
     def CreateVideo(self):
-        self.Video = Video('/home/eduardo/Videos/cut.avi', self.Viewer, self.Slider)
+        self.Video = VideoThread('/home/edu0101/Downloads/file_example_MP4_1280_10MG (1).mp4', self.Viewer, self.Slider)
+        
+
         self.ActivateButtons()
 
     def CreateTimeCounter(self):
@@ -56,24 +60,18 @@ class VideoPlayerWidget(QWidget):
       CurrentFrameId = self.Slider.value()
       self.Video.SetVideoFrame(CurrentFrameId)
 
-    async def Text(self):
-        print('Uepaaaaa')
-#async def coroutine_task(iteraction):
- #   process_time = random.randint(1,5)
-  #  await asyncio.sleep(process_time)
-    #print(f'Iteracao {iteraction}, tempo decorrido: {process_time}')
-    # Aqui nao poderiamos usar a funcao time.sleep(process_time) 
-    # porque a mesma eh bloqueante.
     def ActivateButtons(self):
-        self.Foward1Second.pressed.connect(self.Text)
+        self.Foward1Second.pressed.connect(self.Video.NextSecond)
         #self.Foward1Second.pressed.connect(self.Video.NextSecond)
         self.Foward1Frame.pressed.connect(self.Video.NextFrame)
         self.Back1Second.pressed.connect(self.Video.PreviousSecond)
         self.Back1Frame.pressed.connect(self.Video.PreviousFrame)
-        self.PlayPause.clicked.connect(self.Video.Play)
+        self.PlayPause.clicked.connect(self.Video.Playf)
 
         self.Slider.setMinimum(0)
-        self.Slider.setMaximum(self.Video.GetTotalFrames())
+        self.Slider.setMaximum(int(self.Video.GetTotalFrames()))
+        self.Video.FrameChangeSignal.connect(self.Video.UpdateThreadImage)
+        self.Video.start()
 
     def AddElementsToScreen(self):
         AddWidgetInLayout(self.MediaButtonsLayout,self.Back1Second)
@@ -81,6 +79,8 @@ class VideoPlayerWidget(QWidget):
         AddWidgetInLayout(self.MediaButtonsLayout,self.PlayPause)
         AddWidgetInLayout(self.MediaButtonsLayout,self.Foward1Frame)
         AddWidgetInLayout(self.MediaButtonsLayout,self.Foward1Second)
+
+
 
 
 
