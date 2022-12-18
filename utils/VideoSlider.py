@@ -1,14 +1,12 @@
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt 
-from PyQt5.QtWidgets import QSlider
+from PyQt5.QtWidgets import QSlider, QSizePolicy
 
 def CreateVideoSlider(Widget):
     Slider = ClickerSlider(Widget)
     Slider.setOrientation(Qt.Horizontal)
     Slider.setStyleSheet(u"QLabel{background-color:rgb(0,0,0)}")
-    Slider.setTickPosition(QSlider.TicksRight)
-    Slider.setTickInterval(20)
     
     return Slider
 

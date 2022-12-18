@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QLabel
+from PyQt5.QtWidgets import QLabel, QSizePolicy
 
 def CreateImageViewer(Widget):
     Viewer = QLabel(Widget)
