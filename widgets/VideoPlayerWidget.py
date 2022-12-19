@@ -14,6 +14,7 @@ class VideoPlayerWidget(QWidget):
         self.PrincipalVerticalLayout = QVBoxLayout(self)
         
         self.MediaButtonsLayout = QHBoxLayout()
+        self.MediaButtonsLayout.setSpacing(20)
         
         self.Viewer = CreateImageViewer(self)
         
@@ -22,17 +23,17 @@ class VideoPlayerWidget(QWidget):
 
         self.CreateTimeCounter()
         
-        self.Back1Second = MediaButtons.FixedButton(self, 'stylesheets/FastRewindButton.css', 40, 30)
-        self.Back1Frame = MediaButtons.FixedButton(self, 'stylesheets/Rewind.css', 40, 30)
+        self.Back1Second = MediaButtons.FixedButton(self, 'stylesheets/FastRewindButton.css', 45, 30)
+        self.Back1Frame = MediaButtons.FixedButton(self, 'stylesheets/RewindButton.css', 30, 30)
         
         self.PlayPause  = MediaButtons.ToggleButton(self, 'stylesheets/PlayButton.css','stylesheets/PauseButton.css', 30, 30)
 
-        self.Foward1Frame = MediaButtons.FixedButton(self, 'stylesheets/FowardButton.css', 40, 30)
-        self.Foward1Second = MediaButtons.FixedButton(self, 'stylesheets/FastFowardButton.css', 40, 30)
+        self.Foward1Frame = MediaButtons.FixedButton(self, 'stylesheets/FowardButton.css', 30, 30)
+        self.Foward1Second = MediaButtons.FixedButton(self, 'stylesheets/FastFowardButton.css', 45, 30)
         
         self.AddElementsToScreen()
         
-        self.CreateHorizontalSpacer(410)
+        self.CreateHorizontalSpacer(350)
 
         self.VideoSpeed = MediaButtons.CreateVideoSpeedButton(self)
         AddWidgetInLayout(self.MediaButtonsLayout,self.VideoSpeed)
@@ -42,7 +43,7 @@ class VideoPlayerWidget(QWidget):
         self.PrincipalVerticalLayout.addLayout(self.MediaButtonsLayout) 
 
     def CreateVideo(self):
-        self.Video = VideoThread(self.ParentWidget.FilePaths, self.Viewer, self.Slider, self.TimeCounter, self.VideoInfoWidget)
+        self.Video = VideoThread(self)
         self.ActivateButtons()
 
     def CreateTimeCounter(self):

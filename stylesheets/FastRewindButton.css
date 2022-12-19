@@ -1,7 +1,9 @@
 QPushButton{
-    border-image: url('icons/FastRewind.svg');
+    border-image: url('icons/FastRewind.png');
     background:transparent;    
 }
 QPushButton:hover {
     background-color: rgba(206, 197, 197, 0.103);
 }
+
+

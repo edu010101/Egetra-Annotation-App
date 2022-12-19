@@ -7,12 +7,13 @@ from utils import VideoUtils
 class VideoThread(QThread):
     FrameChangeSignal = pyqtSignal()
 
-    def __init__(self, VideoPath, Viewer, Slider, TimeCounter, VideoInfoWidget):
+    def __init__(self, VideoWidget):
         super().__init__()
-        self.Viewer = Viewer
-        self.Slider = Slider
-        self.TimeCounter = TimeCounter
-        self.Video = cv2.VideoCapture(VideoPath)
+        self.Viewer = VideoWidget.Viewer
+        self.Slider = VideoWidget.Slider
+        self.TimeCounter = VideoWidget.TimeCounter
+        self.VideoSpeedButton = VideoWidget.VideoSpeed
+        self.Video = cv2.VideoCapture(VideoWidget.ParentWidget.FilePaths)
         self.PlayBoolean = False
         self.VideoSpeedMode = 1
 
@@ -97,12 +98,16 @@ class VideoThread(QThread):
     def SwitchSpeed(self):
         if self.VideoSpeedMode == 1:
             self.VideoSpeedMode = 2
+            self.VideoSpeedButton.setText('2x')
+
             self.TimeBeetwenFrames = VideoUtils.CalculateTimeBeetwenFrames(self.FPS) / 2
         elif self.VideoSpeedMode == 2:
             self.VideoSpeedMode = 5
+            self.VideoSpeedButton.setText('5x')
             self.TimeBeetwenFrames = VideoUtils.CalculateTimeBeetwenFrames(self.FPS) / 5
         else:
             self.VideoSpeedMode = 1
+            self.VideoSpeedButton.setText('1x')
             self.TimeBeetwenFrames = VideoUtils.CalculateTimeBeetwenFrames(self.FPS) 
     
     @pyqtSlot()

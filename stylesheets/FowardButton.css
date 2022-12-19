@@ -1,5 +1,5 @@
 QPushButton{
-    border-image: url('icons/FowardIcon.png');
+    border-image: url('icons/Foward.png');
     background:transparent;    
 }
 QPushButton:hover {

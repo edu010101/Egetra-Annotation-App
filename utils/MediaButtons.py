@@ -27,56 +27,14 @@ class FixedButton(QPushButton):
         self.setFixedHeight(Y)
         CSS = LoadCSS(CSS)
         self.setStyleSheet(CSS)
-        
-
-
-def CreatePlayPauseButton(Widget):
-    PlayPause = QPushButton(Widget)
-    PlayPause.setFixedWidth(50)
-    PlayPause.setFixedHeight(50)
-    #self.Pause.setFlat(True)
-    PlayPause.setStyleSheet(u"border-image: url('icons/PlayIcon.png');")
-
-    #self.Pause.setIconSize(QSize(45,45));
-    return PlayPause
-
-    
-def CreateBack1SecondButton(Widget):
-    Back1Second = QPushButton(Widget)
-    Back1Second.setFixedWidth(50)
-    Back1Second.setFixedHeight(40)
-    Back1Second.setIcon(QIcon('/home/eduardo/Downloads/play-back-outline.svg'))
-
-    return Back1Second
-
-def CreateFoward1SecondButton(Widget):
-    Foward1Second = QPushButton(Widget)
-    Foward1Second.setFixedWidth(50)
-    Foward1Second.setFixedHeight(40)
-    Foward1Second.setIcon(QIcon('/home/eduardo/Downloads/play-forward-outline.svg'))
-    
-    return Foward1Second
-    
-def CreateBack1FrameButton(Widget):
-    Back1Frame = QPushButton(Widget)
-    Back1Frame.setFixedWidth(50)
-    Back1Frame.setFixedHeight(40)
-    Back1Frame.setIcon(QIcon('/home/eduardo/Downloads/play-skip-back-outline.svg'))
-    
-    return Back1Frame
-
-def CreateFoward1FrameButton(Widget):
-    Foward1Frame = QPushButton(Widget)
-    Foward1Frame.setFixedWidth(50)
-    Foward1Frame.setFixedHeight(40)
-    Foward1Frame.setIcon(QIcon('/home/eduardo/Downloads/play-skip-forward-outline.svg'))
-   
-    return Foward1Frame
 
 def CreateVideoSpeedButton(Widget):
     VideoSpeed = QPushButton(Widget)
     VideoSpeed.setFixedWidth(50)
     VideoSpeed.setFixedHeight(40)
+    VideoSpeed.setText('1x')
+    VideoSpeed.setFlat(True)
+    VideoSpeed.setStyleSheet(u"""font: 75 20pt "Ubuntu";color:rgb(255, 255, 255); font-weight: bold;""")
     #VideoSpeed.setIcon()
 
     return VideoSpeed
