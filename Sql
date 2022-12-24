@@ -1,0 +1,69 @@
+import mysql.connector
+from mysql.connector import Error
+import pandas as pd
+
+
+def create_database(connection, query):
+    cursor = connection.cursor()
+    try:
+        cursor.execute(query)
+        print("Database created successfully")
+    except Error as err:
+        print(f"Error: '{err}'")
+
+def create_server_connection(host_name, user_name, user_password):
+    connection = None
+    try:
+        connection = mysql.connector.connect(
+            host=host_name,
+            user=user_name,
+            passwd=user_password
+        )
+        print("MySQL Database connection successful")
+    except Error as err:
+        print(f"Error: '{err}'")
+
+    return connection
+
+def create_db_connection(host_name, user_name, user_password, db_name):
+    connection = None
+    try:
+        connection = mysql.connector.connect(
+            host=host_name,
+            user=user_name,
+            passwd=user_password,
+            database=db_name
+        )
+        print("MySQL Database connection successful")
+    except Error as err:
+        print(f"Error: '{err}'")
+
+    return connection
+
+def execute_query(connection, query):
+    cursor = connection.cursor()
+    try:
+        cursor.execute(query)
+        connection.commit()
+        print("Query successful")
+    except Error as err:
+        print(f"Error: '{err}'")
+
+pw = 'xxx'
+#connection = create_server_connection("localhost", "root",'xxx')
+#create_database_query = 'CREATE DATABASE video'
+#create_database(connection, create_database_query)
+
+
+create_video_frame_table = """
+CREATE TABLE video_frame3 (
+  frame INT PRIMARY KEY,
+  video_name VARCHAR(40) NOT NULL,
+  date DATE,
+  latitude FLOAT,
+  longitude FLOAT
+  );
+ """
+
+connection = create_db_connection("localhost", "root", pw, 'video') # Connect to the Database
+execute_query(connection, create_video_frame_table) # Execute our defined query
