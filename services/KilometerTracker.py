@@ -2,27 +2,20 @@ import numpy as np
 import os, sys
 import json
 
-
-# TxtFile = '/home/edu0101/Desktop/Egetra-Annotation-App/MS-112_Eixo_LatLong_10-10m.txt'
-
-# with open(TxtFile, 'r') as f:    
-#     Json = json.load(f)
-
-
 def CalculateDistanceBetween2Points(pt_1, pt_2):
     pt_1 = np.array((pt_1[0], pt_1[1]))
     pt_2 = np.array((pt_2[0], pt_2[1]))
     return np.linalg.norm(pt_1-pt_2)
 
-def FindClosestPoint(Point, PointsDict):
+def FindClosestPoint(Point, PointsDict, Radius=0.04):
     ClosestPoint = None
     ClosesPointKey = None
     Distance = 9999999
 
-    MaxLatValue = Point[0] + 0.04
-    MinLatValue = Point[0] - 0.04
-    MaxLongValue = Point[1] + 0.04
-    MinLongValue = Point[1] - 0.04
+    MaxLatValue = Point[0] + Radius
+    MinLatValue = Point[0] - Radius
+    MaxLongValue = Point[1] + Radius
+    MinLongValue = Point[1] - Radius
 
     for PointKey in PointsDict:
         DictPoint = PointsDict[PointKey]
@@ -34,23 +27,6 @@ def FindClosestPoint(Point, PointsDict):
 
     return ClosestPoint, ClosesPointKey
 
-
-
-
-
-
-
-# #115340,-19.72691,-51.904905
-# x, Id = FindClosestPoint([-20.026288, -52.372851], Json)         
-# print(Id, x)
-
-
-
-
-
-
-
-
 def SaveJson(Dict, Path):
     with open(Path, 'w') as JsonPath:
         json.dump(Dict, JsonPath)
@@ -60,6 +36,10 @@ def LoadJson(JsonPath):
         JsonData = json.load(JsonFile)
     return JsonData
 
+
+def LabelmeToEgetra(LabelmeDict):
+    EgetraDict = {'Latitude': LabelmeDict['latitude'], 'Longitude': LabelmeDict['longitude'], 'Data': LabelmeDict['tempo'], 'Shapes': LabelmeDict['shapes']}    
+    return EgetraDict
 
 # CoordinatesDict = {'MS-112': {}}
 # RoadDict = CoordinatesDict['MS-112']
@@ -71,8 +51,12 @@ def LoadJson(JsonPath):
 #     json.dump(CoordinatesDict, f)
 
 BigJson = {}
-for Json in os.listdir('/mnt/0391adf6-7049-4029-ac48-e8003b7d3456/Downloads/MS-112_C_01_R0.mp4'):
-    JsonData =LoadJson(os.path.join('/mnt/0391adf6-7049-4029-ac48-e8003b7d3456/Downloads/MS-112_C_01_R0.mp4', Json))
-    BigJson['Json'] = JsonData
+for Json in os.listdir('/home/eduardo/labelme/labelme/videos_processados/MS-112_C_01_R0.mp4'):
+    JsonData =LoadJson(os.path.join('/home/eduardo/labelme/labelme/videos_processados/MS-112_C_01_R0.mp4', Json))
+    JsonData = LabelmeToEgetra(JsonData)
+    BigJson[int(Json.split('_')[-2])] = JsonData
 
-SaveJson(BigJson, 'Big112c01.json')
+SaveJson(BigJson, '/home/eduardo/Downloads/MS-112_C_01_R0.mp4.json')
+
+x = LoadJson('/home/eduardo/Downloads/MS-112_C_01_R0.mp4.json')
+print(x['173399'])

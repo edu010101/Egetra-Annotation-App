@@ -4,9 +4,7 @@ from PyQt5.QtWidgets import *
   
 
 def GetFilePath(ParentWidget, Mode, Filter='All files (*.*)', BasePath=QDir.currentPath()):
-    #OpenFile = 0
-    #OpenFiles = 1
-    #OpenDirectory = 2
+    #OpenFile = 0, OpenFiles = 1, OpenDirectory = 2
 
     FilePaths = None
     

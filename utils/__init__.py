@@ -6,3 +6,5 @@ from .VideoThread import VideoThread
 from utils import VideoUtils
 from .InfoLabels import InformationLabel
 from utils import JsonUtils
+from utils import TimeAndDateUtils
+from utils import CoordinatesUtils

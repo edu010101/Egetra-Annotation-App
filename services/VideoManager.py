@@ -1,12 +1,14 @@
 import cv2
-import numpy as np
 from PyQt5.QtGui import QPixmap, QImage
-import time 
+from utils import JsonUtils
 
 class Video():
-    def __init__(self, VideoPath, Viewer, Slider):
+    def __init__(self, VideoPath, JsonPath, Viewer, Slider):
         self.Viewer = Viewer
         self.Slider = Slider
+
+        self.VideoJson = JsonUtils.LoadJson(JsonPath)
+
         self.Video = cv2.VideoCapture(VideoPath)
         self.TotalFrames = self.Video.get(cv2.CAP_PROP_FRAME_COUNT)
         self.FPS = self.Video.get(cv2.CAP_PROP_FPS)
@@ -23,15 +25,7 @@ class Video():
             self.Slider.setValue(round(FrameNumber))
             _, self.CurrentFrame = self.Video.read()
             self.SetImage()
-        
-    def GetTotalFrames(self):
-        return self.TotalFrames
-
-    def ReadCurrentFrame(self):
-        _, self.CurrentFrame = self.Video.read()
-
-    def GetCurrentFrame(self):
-        return self.CurrentFrame
+            self.GetCurrentVideoStatus()
 
     def SetImage(self):
         Height, Width, Channel = self.CurrentFrame.shape
@@ -45,21 +39,25 @@ class Video():
 
     def NextSecond(self):
         self.SetVideoFrame(self.CurrentFrameId+round(self.FPS))
-        self.GetCurrentVideoStatus()
 
     def PreviousSecond(self):
         self.SetVideoFrame(self.CurrentFrameId-round(self.FPS))
-        self.GetCurrentVideoStatus()
         
     def NextFrame(self):
         self.SetVideoFrame(self.CurrentFrameId+1)
-        self.GetCurrentVideoStatus()
-        
 
     def PreviousFrame(self):
         self.SetVideoFrame(self.CurrentFrameId-1)
-        self.GetCurrentVideoStatus()
 
     
+
+    def GetTotalFrames(self):
+        return self.TotalFrames
+
+    def ReadCurrentFrame(self):
+        _, self.CurrentFrame = self.Video.read()
+
+    def GetCurrentFrame(self):
+        return self.CurrentFrame    
             
 

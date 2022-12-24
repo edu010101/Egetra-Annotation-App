@@ -10,7 +10,6 @@ class VideoPlayerWidget(QWidget):
         self.setMinimumSize(300, 300)
         self.AddInfoWidgetContent()
         
-        
         self.PrincipalVerticalLayout = QVBoxLayout(self)
         
         self.MediaButtonsLayout = QHBoxLayout()
@@ -25,11 +24,10 @@ class VideoPlayerWidget(QWidget):
         
         self.Back1Second = MediaButtons.FixedButton(self, 'stylesheets/FastRewindButton.css', 45, 30)
         self.Back1Frame = MediaButtons.FixedButton(self, 'stylesheets/RewindButton.css', 30, 30)
-        
-        self.PlayPause  = MediaButtons.ToggleButton(self, 'stylesheets/PlayButton.css','stylesheets/PauseButton.css', 30, 30)
-
         self.Foward1Frame = MediaButtons.FixedButton(self, 'stylesheets/FowardButton.css', 30, 30)
         self.Foward1Second = MediaButtons.FixedButton(self, 'stylesheets/FastFowardButton.css', 45, 30)
+        self.PlayPause  = MediaButtons.ToggleButton(self, 'stylesheets/PlayButton.css','stylesheets/PauseButton.css', 30, 30)
+
         
         self.AddElementsToScreen()
         

@@ -1,25 +1,33 @@
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, QThread
 import time
+import os
 import cv2
 from PyQt5.QtGui import QPixmap, QImage
-from utils import VideoUtils
+from utils import VideoUtils, TimeAndDateUtils, JsonUtils, CoordinatesUtils
 
 class VideoThread(QThread):
     FrameChangeSignal = pyqtSignal()
-
     def __init__(self, VideoWidget):
         super().__init__()
+        self.coords = JsonUtils.LoadJson('/home/eduardo/Desktop/EgetraApp/CoordinatesDatabase/CorrdinatesDict.json')
+
+        self.PlayBoolean = False
+        self.HaveJson = False
+        self.VideoSpeedMode = 1
+        self.VideoInfoWidget = VideoWidget.VideoInfoWidget
         self.Viewer = VideoWidget.Viewer
         self.Slider = VideoWidget.Slider
         self.TimeCounter = VideoWidget.TimeCounter
         self.VideoSpeedButton = VideoWidget.VideoSpeed
-        self.Video = cv2.VideoCapture(VideoWidget.ParentWidget.FilePaths)
-        self.PlayBoolean = False
-        self.VideoSpeedMode = 1
-
+        
+        self.VideoPath = VideoWidget.ParentWidget.FilePaths
+        self.Video = cv2.VideoCapture(self.VideoPath)
         self.TotalFrames = self.Video.get(cv2.CAP_PROP_FRAME_COUNT)
         self.FPS = self.Video.get(cv2.CAP_PROP_FPS)
         self.TimeBeetwenFrames = VideoUtils.CalculateTimeBeetwenFrames(self.FPS)
+        
+        self.CurrentCoordinates = None
+        self.CreateJson()
 
         #Loads the first frame to display
         _, self.CurrentFrame = self.Video.read()
@@ -34,9 +42,15 @@ class VideoThread(QThread):
             _, self.CurrentFrame = self.Video.read()
             self.CurrentFrameId = self.Video.get(cv2.CAP_PROP_POS_FRAMES)
             self.CurrentTimeInMilliseconds = self.Video.get(cv2.CAP_PROP_POS_MSEC)
+
+            if self.HaveJson:
+                self.CurrentCoordinates = self.GetCurrentCoordinates()
+                self.VideoInfoWidget.Latitude.ChangeInformation(str(self.CurrentCoordinates[0]))
+                self.VideoInfoWidget.Longitude.ChangeInformation(str(self.CurrentCoordinates[1]))
+                self.VideoInfoWidget.Km.ChangeInformation(str(CoordinatesUtils.FindClosestPoint(self.CurrentCoordinates, self.coords['MS-112'])[1])) 
             
             self.Slider.setValue(round(FrameNumber))
-            self.TimeCounter.setText(self.ConvertMillisecondsTime(self.CurrentTimeInMilliseconds))
+            self.TimeCounter.setText(TimeAndDateUtils.ConvertMillisecondsTime(self.CurrentTimeInMilliseconds))
             #self.FrameChangeSignal.emit()
             self.GetCurrentVideoStatus()
             self.ShowImageInViewer()
@@ -62,23 +76,39 @@ class VideoThread(QThread):
                 
                 self.FrameChangeSignal.emit()
     
-    def ConvertMillisecondsTime(self, MilisecondsTime):
-        Seconds=int((MilisecondsTime/1000)%60)
-        Minutes=int((MilisecondsTime/(1000*60))%60)
-        Hours=int((MilisecondsTime/(1000*60*60))%24)
+    def SwitchSpeed(self):
+        if self.VideoSpeedMode == 1:
+            self.VideoSpeedMode = 2
+            self.VideoSpeedButton.setText('2x')
 
-        TimeString = "%02d:%02d:%02d" % (Hours, Minutes, Seconds)
-
-        return TimeString
+            self.TimeBeetwenFrames = VideoUtils.CalculateTimeBeetwenFrames(self.FPS) / 2
+        elif self.VideoSpeedMode == 2:
+            self.VideoSpeedMode = 5
+            self.VideoSpeedButton.setText('5x')
+            self.TimeBeetwenFrames = VideoUtils.CalculateTimeBeetwenFrames(self.FPS) / 5
+        else:
+            self.VideoSpeedMode = 1
+            self.VideoSpeedButton.setText('1x')
+            self.TimeBeetwenFrames = VideoUtils.CalculateTimeBeetwenFrames(self.FPS) 
+    
+    def CreateJson(self):
+        if os.path.isfile(self.VideoPath + '.json'):
+            self.HaveJson = True
+            self.VideoJson = JsonUtils.LoadJson(self.VideoPath + '.json')
 
     def GetTotalFrames(self):
         return self.TotalFrames
 
     def GetCurrentFrame(self):
         return self.CurrentFrame
+    
+    def GetCurrentCoordinates(self):
+        FrameDict = self.VideoJson[str(int(self.CurrentFrameId))]
+        Coordinates = FrameDict['Latitude'],FrameDict['Longitude']
+        return Coordinates
 
     def GetCurrentVideoStatus(self):
-        print('Current in frame ',self.CurrentFrameId, ' de Fps ', self.FPS)
+        print('Current in frame ',self.CurrentFrameId, ' de Fps ', self.FPS, self.HaveJson)
 
     def NextSecond(self):
         self.SetVideoFrame(self.CurrentFrameId+round(self.FPS))
@@ -94,21 +124,6 @@ class VideoThread(QThread):
     
     def PlayOrPause(self):
         self.PlayBoolean = not self.PlayBoolean
-
-    def SwitchSpeed(self):
-        if self.VideoSpeedMode == 1:
-            self.VideoSpeedMode = 2
-            self.VideoSpeedButton.setText('2x')
-
-            self.TimeBeetwenFrames = VideoUtils.CalculateTimeBeetwenFrames(self.FPS) / 2
-        elif self.VideoSpeedMode == 2:
-            self.VideoSpeedMode = 5
-            self.VideoSpeedButton.setText('5x')
-            self.TimeBeetwenFrames = VideoUtils.CalculateTimeBeetwenFrames(self.FPS) / 5
-        else:
-            self.VideoSpeedMode = 1
-            self.VideoSpeedButton.setText('1x')
-            self.TimeBeetwenFrames = VideoUtils.CalculateTimeBeetwenFrames(self.FPS) 
     
     @pyqtSlot()
     def UpdateThreadImage(self):
