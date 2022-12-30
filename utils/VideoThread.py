@@ -2,14 +2,19 @@ from PyQt5.QtCore import pyqtSignal, pyqtSlot, QThread
 import time
 import os
 import cv2
+import numpy
 from PyQt5.QtGui import QPixmap, QImage
 from utils import VideoUtils, TimeAndDateUtils, JsonUtils, CoordinatesUtils
 
+from .ViewerUpdater import ViewerUpdater
+
 class VideoThread(QThread):
-    FrameChangeSignal = pyqtSignal()
+    FrameChangeSignal = pyqtSignal(numpy.ndarray)
     def __init__(self, VideoWidget):
         super().__init__()
         self.coords = JsonUtils.LoadJson('/home/eduardo/Desktop/EgetraApp/CoordinatesDatabase/CorrdinatesDict.json')
+        self.ViewerUpdater =ViewerUpdater(VideoWidget.Viewer)
+
 
         self.PlayBoolean = False
         self.HaveJson = False
@@ -53,7 +58,7 @@ class VideoThread(QThread):
             self.TimeCounter.setText(TimeAndDateUtils.ConvertMillisecondsTime(self.CurrentTimeInMilliseconds))
             #self.FrameChangeSignal.emit()
             self.GetCurrentVideoStatus()
-            self.ShowImageInViewer()
+            
 
     def ShowImageInViewer(self):
         Height, Width, Channel = self.CurrentFrame.shape
@@ -74,18 +79,19 @@ class VideoThread(QThread):
                 self.GetCurrentVideoStatus()
                 #self.Slider.setValue(round(FrameNumber))
                 
-                self.FrameChangeSignal.emit()
+                self.FrameChangeSignal.emit(self.CurrentFrame)
     
     def SwitchSpeed(self):
         if self.VideoSpeedMode == 1:
             self.VideoSpeedMode = 2
             self.VideoSpeedButton.setText('2x')
-
             self.TimeBeetwenFrames = VideoUtils.CalculateTimeBeetwenFrames(self.FPS) / 2
+
         elif self.VideoSpeedMode == 2:
             self.VideoSpeedMode = 5
             self.VideoSpeedButton.setText('5x')
             self.TimeBeetwenFrames = VideoUtils.CalculateTimeBeetwenFrames(self.FPS) / 5
+
         else:
             self.VideoSpeedMode = 1
             self.VideoSpeedButton.setText('1x')

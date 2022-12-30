@@ -50,13 +50,20 @@ def LabelmeToEgetra(LabelmeDict):
 # with open('/home/edu0101/Desktop/Egetra-Annotation-App/CoordinatesDatabase/CorrdinatesDict.json', 'w') as f:
 #     json.dump(CoordinatesDict, f)
 
-BigJson = {}
-for Json in os.listdir('/home/eduardo/labelme/labelme/videos_processados/MS-112_C_01_R0.mp4'):
-    JsonData =LoadJson(os.path.join('/home/eduardo/labelme/labelme/videos_processados/MS-112_C_01_R0.mp4', Json))
-    JsonData = LabelmeToEgetra(JsonData)
-    BigJson[int(Json.split('_')[-2])] = JsonData
+Dir = '/home/eduardo/labelme/labelme/videos_processados'
+OutPath = '/home/eduardo/labelme/labelme/videos_processados'
+for VideoFolder in os.listdir(Dir):
+    if os.path.isdir(os.path.join(Dir, VideoFolder)):
+        print(VideoFolder)
+        BigJson = {}
+        for Json in os.listdir(os.path.join(Dir, VideoFolder)):
+            if Json.endswith('.json'):
+                JsonData =LoadJson(os.path.join(Dir, VideoFolder, Json))
+                #JsonData = LabelmeToEgetra(JsonData)
+                BigJson[Json] = JsonData    
 
-SaveJson(BigJson, '/home/eduardo/Downloads/MS-112_C_01_R0.mp4.json')
+        SaveJson(BigJson, os.path.join(OutPath, VideoFolder)+'.json' )
+    
 
-x = LoadJson('/home/eduardo/Downloads/MS-112_C_01_R0.mp4.json')
-print(x['173399'])
+#x = LoadJson('/home/eduardo/Downloads/MS-112_C_01_R0.mp4.json')
+#print(x['173399'])

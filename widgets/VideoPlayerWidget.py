@@ -73,7 +73,7 @@ class VideoPlayerWidget(QWidget):
         self.Slider.setMinimum(0)
         self.Slider.setMaximum(int(self.Video.GetTotalFrames()))
         
-        self.Video.FrameChangeSignal.connect(self.Video.UpdateThreadImage)
+        self.Video.FrameChangeSignal.connect(self.Video.ViewerUpdater.UpdateThreadImage)
         self.Video.start()
 
     def AddElementsToScreen(self):
