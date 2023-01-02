@@ -1,10 +1,12 @@
 from PyQt5.QtWidgets import QLabel, QWidget, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy
-from utils import AddSpacerInLayout, AddWidgetInLayout, MediaButtons, CreateImageViewer, CreateVideoSlider, VideoThread
+from utils import AddSpacerInLayout, AddWidgetInLayout, MediaButtons, CreateImageViewer, CreateVideoSlider, VideoThread, ViewerUpdater
 import os
 
 class VideoPlayerWidget(QWidget):
     def __init__(self, ParentWidget, VideoInfoWidget):
         super().__init__(ParentWidget)
+
+        
         self.ParentWidget = ParentWidget
         self.VideoInfoWidget = VideoInfoWidget
         self.setMinimumSize(300, 300)
@@ -17,6 +19,7 @@ class VideoPlayerWidget(QWidget):
         
         self.Viewer = CreateImageViewer(self)
         
+
         self.Slider = CreateVideoSlider(self)
         self.Slider.valueChanged.connect(self.ChangeVideoFrameBasedOnSlider)
 
@@ -42,6 +45,8 @@ class VideoPlayerWidget(QWidget):
 
     def CreateVideo(self):
         self.Video = VideoThread(self)
+        self.ViewerUpdater = ViewerUpdater(self.Viewer)
+
         self.ActivateButtons()
 
     def CreateTimeCounter(self):
@@ -73,8 +78,10 @@ class VideoPlayerWidget(QWidget):
         self.Slider.setMinimum(0)
         self.Slider.setMaximum(int(self.Video.GetTotalFrames()))
         
-        self.Video.FrameChangeSignal.connect(self.Video.ViewerUpdater.UpdateThreadImage)
+        self.ViewerUpdater.start()
+        self.Video.FrameChangeSignal.connect(self.ViewerUpdater.UpdateThreadImage)
         self.Video.start()
+
 
     def AddElementsToScreen(self):
         AddWidgetInLayout(self.PrincipalVerticalLayout, self.Viewer)

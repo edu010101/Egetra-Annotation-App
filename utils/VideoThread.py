@@ -6,16 +6,12 @@ import numpy
 from PyQt5.QtGui import QPixmap, QImage
 from utils import VideoUtils, TimeAndDateUtils, JsonUtils, CoordinatesUtils
 
-from .ViewerUpdater import ViewerUpdater
-
 class VideoThread(QThread):
     FrameChangeSignal = pyqtSignal(numpy.ndarray)
     def __init__(self, VideoWidget):
         super().__init__()
-        self.coords = JsonUtils.LoadJson('/home/eduardo/Desktop/EgetraApp/CoordinatesDatabase/CorrdinatesDict.json')
-        self.ViewerUpdater =ViewerUpdater(VideoWidget.Viewer)
-
-
+        self.coords = JsonUtils.LoadJson('/home/edu0101/Desktop/Egetra-Annotation-App/CoordinatesDatabase/CorrdinatesDict.json')
+        
         self.PlayBoolean = False
         self.HaveJson = False
         self.VideoSpeedMode = 1
@@ -54,10 +50,10 @@ class VideoThread(QThread):
                 self.VideoInfoWidget.Longitude.ChangeInformation(str(self.CurrentCoordinates[1]))
                 self.VideoInfoWidget.Km.ChangeInformation(str(CoordinatesUtils.FindClosestPoint(self.CurrentCoordinates, self.coords['MS-112'])[1])) 
             
-            self.Slider.setValue(round(FrameNumber))
+            #self.Slider.setValue(round(FrameNumber))
             self.TimeCounter.setText(TimeAndDateUtils.ConvertMillisecondsTime(self.CurrentTimeInMilliseconds))
-            #self.FrameChangeSignal.emit()
             self.GetCurrentVideoStatus()
+            self.FrameChangeSignal.emit(self.CurrentFrame)
             
 
     def ShowImageInViewer(self):
@@ -77,9 +73,15 @@ class VideoThread(QThread):
                 _, self.CurrentFrame = self.Video.read()
                 self.CurrentFrameId = self.Video.get(cv2.CAP_PROP_POS_FRAMES)
                 self.GetCurrentVideoStatus()
-                #self.Slider.setValue(round(FrameNumber))
+                #self.Slider.setValue(round(self.CurrentFrameId))
                 
-                self.FrameChangeSignal.emit(self.CurrentFrame)
+                #self.FrameChangeSignal.emit(self.CurrentFrame)
+                Height, Width, Channel = self.CurrentFrame.shape
+                BytesPerLine = 3 * Width
+                QtImage = QImage(self.CurrentFrame.data, Width, Height, BytesPerLine, QImage.Format_BGR888)
+                self.Viewer.setPixmap(QPixmap(QtImage))
+                self.Viewer.setScaledContents(True)
+                self.UpdateViewer = False
     
     def SwitchSpeed(self):
         if self.VideoSpeedMode == 1:
@@ -130,13 +132,6 @@ class VideoThread(QThread):
     
     def PlayOrPause(self):
         self.PlayBoolean = not self.PlayBoolean
-    
-    @pyqtSlot()
-    def UpdateThreadImage(self):
-        self.ShowImageInViewer()
-        
-        
-    
 
 
 

@@ -1,11 +1,9 @@
 import numpy as np
-import os, sys
-import json
 
-def CalculateDistanceBetween2Points(pt_1, pt_2):
-    pt_1 = np.array((pt_1[0], pt_1[1]))
-    pt_2 = np.array((pt_2[0], pt_2[1]))
-    return np.linalg.norm(pt_1-pt_2)
+def CalculateDistanceBetween2Points(Point1, Point2):
+    Point1 = np.array((Point1[0], Point1[1]))
+    Point2 = np.array((Point2[0], Point2[1]))
+    return np.linalg.norm(Point1-Point2)
 
 def FindClosestPoint(Point, PointsDict, Radius=0.04):
     ClosestPoint = None
