@@ -12,7 +12,7 @@ class ViewerUpdater(QThread):
     #The name of the method needs to be "run", because its a QThread native method
     def run(self):
         while True:
-            if self.UpdateViewer:   
+            if self.UpdateViewer:  
                 Height, Width, Channel = self.Frame.shape
                 BytesPerLine = 3 * Width
                 QtImage = QImage(self.Frame.data, Width, Height, BytesPerLine, QImage.Format_BGR888)

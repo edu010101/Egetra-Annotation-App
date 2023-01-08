@@ -10,7 +10,9 @@ class VideoPlayerWidget(QWidget):
         self.ParentWidget = ParentWidget
         self.VideoInfoWidget = VideoInfoWidget
         self.setMinimumSize(300, 300)
-        self.AddInfoWidgetContent()
+
+        self.VideoInfoWidget.StartContent(self.ParentWidget.FilePaths)
+        #self.AddInfoWidgetContent()
         
         self.PrincipalVerticalLayout = QVBoxLayout(self)
         
@@ -19,9 +21,8 @@ class VideoPlayerWidget(QWidget):
         
         self.Viewer = CreateImageViewer(self)
         
-
         self.Slider = CreateVideoSlider(self)
-        self.Slider.valueChanged.connect(self.ChangeVideoFrameBasedOnSlider)
+        #self.Slider.valueChanged.connect(self.ChangeVideoFrameBasedOnSlider)
 
         self.CreateTimeCounter()
         
@@ -41,7 +42,14 @@ class VideoPlayerWidget(QWidget):
         
         self.CreateVideo()
 
+        self.Slider.start(self.Video)
+        #self.Slider.clicked.connect()
+
         self.PrincipalVerticalLayout.addLayout(self.MediaButtonsLayout) 
+
+    def test(self):
+        #self.Video.FrameIdTarget = self.Slider.
+        self.Video.ChangeFrameBoolean = True
 
     def CreateVideo(self):
         self.Video = VideoThread(self)
@@ -62,10 +70,7 @@ class VideoPlayerWidget(QWidget):
     
     def ChangeVideoFrameBasedOnSlider(self):
         CurrentFrameId = self.Slider.value()
-        self.Video.SetVideoFrame(CurrentFrameId)
-
-    def AddInfoWidgetContent(self):
-        self.VideoInfoWidget.RoadLabel.ChangeInformation(os.path.splitext(os.path.split(self.ParentWidget.FilePaths)[1])[0])
+        #self.Video.SetVideoFrame(CurrentFrameId)
 
     def ActivateButtons(self):
         self.Foward1Second.pressed.connect(self.Video.NextSecond)
@@ -73,13 +78,11 @@ class VideoPlayerWidget(QWidget):
         self.Back1Second.pressed.connect(self.Video.PreviousSecond)
         self.Back1Frame.pressed.connect(self.Video.PreviousFrame)
         self.PlayPause.clicked.connect(self.Video.PlayOrPause)
-        self.VideoSpeed.clicked.connect(self.Video.SwitchSpeed)
+        self.VideoSpeed.clicked.connect(self.Video.SwitchVideoSpeed)
 
         self.Slider.setMinimum(0)
         self.Slider.setMaximum(int(self.Video.GetTotalFrames()))
         
-        self.ViewerUpdater.start()
-        self.Video.FrameChangeSignal.connect(self.ViewerUpdater.UpdateThreadImage)
         self.Video.start()
 
 

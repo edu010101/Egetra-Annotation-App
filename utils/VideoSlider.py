@@ -13,11 +13,15 @@ def CreateVideoSlider(Widget):
 #His StackOverflow account -> https://stackoverflow.com/users/6622587/eyllanesc
 
 class ClickerSlider(QtWidgets.QSlider):
-    def mousePressEvent(self, event):
-        super(ClickerSlider, self).mousePressEvent(event)
+    def mouseReleaseEvent(self, event):
+        super(ClickerSlider, self).mouseReleaseEvent(event)
         if event.button() == QtCore.Qt.LeftButton:
             val = self.pixelPosToRangeValue(event.pos())
             self.setValue(val)
+            self.Video.FrameIdTarget = int(val)
+            print(val)
+            self.Video.ChangeFrameBoolean = True
+            
 
     def pixelPosToRangeValue(self, pos):
         opt = QtWidgets.QStyleOptionSlider()
@@ -37,6 +41,9 @@ class ClickerSlider(QtWidgets.QSlider):
         p = pr.x() if self.orientation() == QtCore.Qt.Horizontal else pr.y()
         return QtWidgets.QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), p - sliderMin,
                                                sliderMax - sliderMin, opt.upsideDown)
+
+    def start(self, Video):
+        self.Video = Video
 
 
 
