@@ -1,28 +1,23 @@
 from PyQt5.QtWidgets import QLabel, QWidget, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy
-from utils import AddSpacerInLayout, AddWidgetInLayout, MediaButtons, CreateImageViewer, CreateVideoSlider, VideoThread, ViewerUpdater
+from utils import AddSpacerInLayout, AddWidgetInLayout, MediaButtons, CreateVideoSlider, VideoThread, ViewerUpdater, ClickerSlider, ImageViewer
 import os
 
 class VideoPlayerWidget(QWidget):
     def __init__(self, ParentWidget, VideoInfoWidget):
-        super().__init__(ParentWidget)
-
-        
+        super().__init__(ParentWidget)        
         self.ParentWidget = ParentWidget
-        self.VideoInfoWidget = VideoInfoWidget
         self.setMinimumSize(300, 300)
-
+        
+        self.VideoInfoWidget = VideoInfoWidget
         self.VideoInfoWidget.StartContent(self.ParentWidget.FilePaths)
-        #self.AddInfoWidgetContent()
         
         self.PrincipalVerticalLayout = QVBoxLayout(self)
-        
+                                                          
         self.MediaButtonsLayout = QHBoxLayout()
         self.MediaButtonsLayout.setSpacing(20)
         
-        self.Viewer = CreateImageViewer(self)
-        
-        self.Slider = CreateVideoSlider(self)
-        #self.Slider.valueChanged.connect(self.ChangeVideoFrameBasedOnSlider)
+        self.Viewer = ImageViewer.VideoViewer(self)
+        self.Slider = ClickerSlider(self, 'stylesheets/VideoSlider.css')
 
         self.CreateTimeCounter()
         
@@ -31,7 +26,6 @@ class VideoPlayerWidget(QWidget):
         self.Foward1Frame = MediaButtons.FixedButton(self, 'stylesheets/FowardButton.css', 30, 30)
         self.Foward1Second = MediaButtons.FixedButton(self, 'stylesheets/FastFowardButton.css', 45, 30)
         self.PlayPause  = MediaButtons.ToggleButton(self, 'stylesheets/PlayButton.css','stylesheets/PauseButton.css', 30, 30)
-
         
         self.AddElementsToScreen()
         
@@ -42,18 +36,13 @@ class VideoPlayerWidget(QWidget):
         
         self.CreateVideo()
 
-        self.Slider.start(self.Video)
-        #self.Slider.clicked.connect()
+        self.Slider.Video = self.Video
 
         self.PrincipalVerticalLayout.addLayout(self.MediaButtonsLayout) 
 
-    def test(self):
-        #self.Video.FrameIdTarget = self.Slider.
-        self.Video.ChangeFrameBoolean = True
 
     def CreateVideo(self):
         self.Video = VideoThread(self)
-        self.ViewerUpdater = ViewerUpdater(self.Viewer)
 
         self.ActivateButtons()
 
@@ -81,7 +70,7 @@ class VideoPlayerWidget(QWidget):
         self.VideoSpeed.clicked.connect(self.Video.SwitchVideoSpeed)
 
         self.Slider.setMinimum(0)
-        self.Slider.setMaximum(int(self.Video.GetTotalFrames()))
+        self.Slider.setMaximum(int(self.Video.GetTotalFrames())-5)
         
         self.Video.start()
 

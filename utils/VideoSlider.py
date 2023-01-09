@@ -1,11 +1,16 @@
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt 
+from utils.StylesheetUtils import LoadCSS
 
-def CreateVideoSlider(Widget):
+def CreateVideoSlider(Widget, CSS):
     Slider = ClickerSlider(Widget)
     Slider.setOrientation(Qt.Horizontal)
-    Slider.setStyleSheet(u"QLabel{background-color:rgb(0,0,0)}")
+    #Slider.setStyleSheet(u"QLabel{background-color:rgb(0,0,0)}")
+    
+
+    CSS = LoadCSS(CSS)
+    Slider.setStyleSheet(CSS)
     
     return Slider
 
@@ -13,15 +18,21 @@ def CreateVideoSlider(Widget):
 #His StackOverflow account -> https://stackoverflow.com/users/6622587/eyllanesc
 
 class ClickerSlider(QtWidgets.QSlider):
+    def __init__(self, ParentWidget, CSS):
+        super().__init__(ParentWidget)
+        self.setOrientation(Qt.Horizontal)
+
+        CSS = LoadCSS(CSS)
+        self.setStyleSheet(CSS)
+        
     def mouseReleaseEvent(self, event):
         super(ClickerSlider, self).mouseReleaseEvent(event)
         if event.button() == QtCore.Qt.LeftButton:
-            val = self.pixelPosToRangeValue(event.pos())
-            self.setValue(val)
-            self.Video.FrameIdTarget = int(val)
-            print(val)
-            self.Video.ChangeFrameBoolean = True
-            
+            CurrentSliderValue = self.pixelPosToRangeValue(event.pos())
+            self.setValue(CurrentSliderValue)
+
+            self.Video.FrameIdTarget = CurrentSliderValue
+            self.Video.ChangeFrameBoolean = True       
 
     def pixelPosToRangeValue(self, pos):
         opt = QtWidgets.QStyleOptionSlider()
@@ -42,8 +53,7 @@ class ClickerSlider(QtWidgets.QSlider):
         return QtWidgets.QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), p - sliderMin,
                                                sliderMax - sliderMin, opt.upsideDown)
 
-    def start(self, Video):
-        self.Video = Video
+    
 
 
 

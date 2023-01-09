@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import  QWidget, QVBoxLayout, QSizePolicy
 from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
 from utils import InformationLabel, AddWidgetInLayout, CoordinatesUtils
 import os
+import time
 
 class VideoInfoWidget(QWidget):
     def __init__(self, ParentWidget, X, Y):
@@ -56,3 +57,6 @@ class CoordinatesInfoUpdaterThread(QObject):
         self.InfoWidget.Latitude.ChangeInformation("{:.4f}".format(Coordinates[0]))
         self.InfoWidget.Longitude.ChangeInformation("{:.4f}".format(Coordinates[1]))
         self.InfoWidget.Km.ChangeInformation("{:.2f}".format(int(self.InfoWidget.CoordinatesManager.FindClosestPoint(Coordinates)[1]) / 1000))
+
+        
+        

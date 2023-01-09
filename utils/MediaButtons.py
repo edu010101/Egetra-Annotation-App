@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtWidgets import QPushButton, QSlider
 from PyQt5.QtGui import QIcon
 from utils.StylesheetUtils import LoadCSS
 
@@ -27,6 +27,8 @@ class FixedButton(QPushButton):
         self.setFixedHeight(Y)
         CSS = LoadCSS(CSS)
         self.setStyleSheet(CSS)
+
+
 
 def CreateVideoSpeedButton(Widget):
     VideoSpeed = QPushButton(Widget)

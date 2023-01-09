@@ -51,8 +51,9 @@ class VideoThread(QThread):
                 self.CurrentTimeInMilliseconds = self.Video.get(cv2.CAP_PROP_POS_MSEC)
 
                 #Update some elements every second instead of every frame
-                if self.CurrentSecond < self.CurrentTimeInMilliseconds // 1000:
+                if self.CurrentSecond != self.CurrentTimeInMilliseconds // 1000:
                     self.CurrentSecond = self.CurrentTimeInMilliseconds // 1000
+                    print('Entrou')
                     
                     self.Slider.setValue(self.CurrentFrameId)
                     self.TimeCounter.setText(TimeAndDateUtils.ConvertMillisecondsTime(self.CurrentTimeInMilliseconds))
@@ -77,7 +78,7 @@ class VideoThread(QThread):
                     if self.HaveJson:
                         self.CurrentCoordinates = self.GetCurrentCoordinates()
                         self.UpdateCoordinates.emit(self.CurrentCoordinates)
-                        
+
                     self.ChangeFrameBoolean = False
                 
     def UpdateFrameAndTime(self):

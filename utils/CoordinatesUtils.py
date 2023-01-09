@@ -22,13 +22,12 @@ class CoordinatesManager():
         MinLongValue = str(Point[1] - Radius)
 
         QueryString="SELECT * FROM Coordinate WHERE road= '"+self.RoadName+"' and direction='"+self.Direction+"' and latitude<"+MaxLatValue+" and latitude>"+MinLatValue+" and longitude<"+MaxLongValue+" and longitude>"+MinLongValue+";"
-        #print(QueryString)
-
         
+        start = time.time()
         QueryResults = self.SearchQuery(QueryString)
+        end = time.time()
+        print(end - start, len(QueryResults))
         
-        #print(len(QueryResults))
-
         for PointTuple in QueryResults:
             PointCoordinates = [PointTuple[3], PointTuple[4]]
             CurrentDistance = self.CalculateDistanceBetween2Points(PointCoordinates, Point)

@@ -1,5 +1,3 @@
-
-
 def ConvertMillisecondsTime(MilisecondsTime):
         Seconds=int((MilisecondsTime/1000)%60)
         Minutes=int((MilisecondsTime/(1000*60))%60)

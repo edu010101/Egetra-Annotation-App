@@ -1,9 +1,9 @@
-from PyQt5.QtWidgets import QLabel, QSizePolicy
+from PyQt5.QtWidgets import QLabel
+from utils.StylesheetUtils import LoadCSS
 
-def CreateImageViewer(Widget):
-    Viewer = QLabel(Widget)
-    Viewer.setStyleSheet(u"QLabel{background-color:rgb(0,0,0)}")
-    #self.Viewer.setGeometry(QRect(X, Y, 1280, 720))  
-    return Viewer
-    
-    
+class VideoViewer(QLabel):
+    def __init__(self, ParentWidget, CSS=False):
+        super().__init__(ParentWidget)
+        if CSS:
+            CSS = LoadCSS(CSS)
+            self.setStyleSheet(CSS)
